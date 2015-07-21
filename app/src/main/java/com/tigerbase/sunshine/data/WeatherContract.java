@@ -83,7 +83,7 @@ public class WeatherContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
 
-        public static Uri buildLocation(long id)
+        public static Uri buildLocationUri(long id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
