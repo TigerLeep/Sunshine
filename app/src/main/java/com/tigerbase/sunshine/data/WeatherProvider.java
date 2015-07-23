@@ -138,7 +138,6 @@ public class WeatherProvider extends ContentProvider {
                 WeatherContract.PATH_LOCATION,
                 WeatherProvider.LOCATION);
 
-
         // 3) Return the new matcher!
         return matcher;
     }
