@@ -52,9 +52,12 @@ public class ForecastDetailFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         _textView = (TextView)rootView.findViewById(R.id.detail_text);
 
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT))
+        if (intent != null)
         {
-            _forecast = intent.getStringExtra(Intent.EXTRA_TEXT);
+            _forecast = intent.getDataString();
+        }
+        if (_forecast != null)
+        {
             _textView.setText(_forecast);
         }
         return rootView;
