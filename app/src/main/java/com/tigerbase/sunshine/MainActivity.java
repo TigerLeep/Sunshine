@@ -20,6 +20,27 @@ public class MainActivity extends ActionBarActivity {
     private String _locationSetting = "";
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG, "onCreate");
+        setContentView(R.layout.activity_main);
+        _locationSetting = Utility.getPreferredLocation(this);
+        if (savedInstanceState == null) {
+            Log.v(LOG_TAG, "Creating new ForecastFragment");
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.forecast_container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
+                    .commit();
+        }
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        Log.v(LOG_TAG, "onStart");
+    }
+
+    @Override
     protected void onPause()
     {
         super.onPause();
@@ -34,6 +55,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (_locationSetting != Utility.getPreferredLocation(this))
         {
+            Log.v(LOG_TAG, "Preferred Location changed");
             ForecastFragment forecastFragment =
                     (ForecastFragment)getSupportFragmentManager()
                             .findFragmentByTag(FORECASTFRAGMENT_TAG);
@@ -47,26 +69,6 @@ public class MainActivity extends ActionBarActivity {
     {
         super.onStop();
         Log.v(LOG_TAG, "onStop");
-    }
-
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        Log.v(LOG_TAG, "onStart");
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.v(LOG_TAG, "onCreate");
-        setContentView(R.layout.activity_main);
-        _locationSetting = Utility.getPreferredLocation(this);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.forecast_container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
-        }
     }
 
     @Override

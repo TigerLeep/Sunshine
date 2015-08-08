@@ -72,51 +72,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     {
         Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
-            setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        Log.v(LOG_TAG, "onActivityCreated");
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        Log.v(LOG_TAG, "onCreateOptionsMenu");
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_forecastfragment, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        Log.v(LOG_TAG, "onOptionsItemSelected");
-        int id = item.getItemId();
-        if (id == R.id.action_refresh)
-        {
-            UpdateWeather();
-            Log.v(LOG_TAG, "Refresh!");
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void UpdateWeather() {
-        Log.v(LOG_TAG, "UpdateWeather!");
-
-        FetchWeatherTask task = new FetchWeatherTask(getActivity());
-        String location = Utility.getPreferredLocation(getActivity());
-
-        String unitsKey = getString(R.string.pref_units_key);
-        String unitsDefault = getString(R.string.pref_units_default);
-        String units = Utility.isMetric(getActivity())
-                ? getString(R.string.pref_units_metric)
-                : getString(R.string.pref_units_imperial);
-        task.execute(location, units);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -153,11 +109,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onStart()
+    public void onActivityCreated(Bundle savedInstanceState)
     {
-        Log.v(LOG_TAG, "onStart");
-        super.onStart();
-        //UpdateWeather();
+        Log.v(LOG_TAG, "onActivityCreated");
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     // LoaderManager.LoaderCallbacks interface methods
@@ -182,9 +138,51 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void onStart()
+    {
+        Log.v(LOG_TAG, "onStart");
+        super.onStart();
+        //UpdateWeather();
+    }
+
+    @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "onLoadFinished");
         _adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_forecastfragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        Log.v(LOG_TAG, "onOptionsItemSelected");
+        int id = item.getItemId();
+        if (id == R.id.action_refresh)
+        {
+            UpdateWeather();
+            Log.v(LOG_TAG, "Refresh!");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void UpdateWeather() {
+        Log.v(LOG_TAG, "UpdateWeather!");
+
+        FetchWeatherTask task = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+
+        String units = Utility.isMetric(getActivity())
+                ? getString(R.string.pref_units_metric)
+                : getString(R.string.pref_units_imperial);
+        task.execute(location, units);
     }
 
     @Override

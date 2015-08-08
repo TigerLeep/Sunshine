@@ -64,6 +64,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         // Students: First, check if the location with this city name exists in the db
         // If it exists, return the current ID
         // Otherwise, insert it using the content resolver and the base URI
+        Log.v(LOG_TAG, "addLocation");
         Cursor locationCursor =
                 mContext.getContentResolver()
                         .query(WeatherContract.LocationEntry.CONTENT_URI,
@@ -75,12 +76,14 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         long locationId = 0;
         if (locationCursor.moveToFirst())
         {
+            Log.v(LOG_TAG, "addLocation: Found location");
             int idColumnIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
             locationId = locationCursor.getLong(idColumnIndex);
         }
         locationCursor.close();
         if(locationId > 0)
         {
+            Log.v(LOG_TAG, "addLocation: Return Location " + locationId);
             return locationId;
         }
 
@@ -95,6 +98,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
         locationId = ContentUris.parseId(newLocationUri);
 
+        Log.v(LOG_TAG, "addLocation: Created location " + locationId);
         return locationId;
     }
 
@@ -108,6 +112,8 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     private void getWeatherDataFromJson(String forecastJsonStr,
                                             String locationSetting)
             throws JSONException {
+
+        Log.v(LOG_TAG, "getWeatherDataFromJson");
 
         // Now we have a String representing the complete forecast in JSON Format.
         // Fortunately parsing is easy:  constructor takes the JSON string and converts it
@@ -249,7 +255,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
     @Override
     protected Void doInBackground(String... params) {
-
+        Log.v(LOG_TAG, "doInBackground");
         // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
             return null;
@@ -299,6 +305,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             StringBuilder buffer = new StringBuilder();
             if (inputStream == null) {
                 // Nothing to do.
+                Log.v(LOG_TAG, "doInBackground: inputStream null");
                 return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -313,17 +320,18 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                Log.v(LOG_TAG, "doInBackground: buffer.length() == 0");
                 return null;
             }
             forecastJsonStr = buffer.toString();
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(LOG_TAG, "IOException: " + e.getMessage(), e);
             // If the code didn't successfully get the weather data, there's no point in attempting
             // to parse it.
             return null;
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
+            Log.e(LOG_TAG, "JSONException: " + e.getMessage(), e);
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
