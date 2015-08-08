@@ -255,6 +255,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             return null;
         }
         String locationQuery = params[0];
+        String unitsQuery = params[1] ;
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -280,9 +281,9 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             final String DAYS_PARAM = "cnt";
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                    .appendQueryParameter(QUERY_PARAM, params[0])
+                    .appendQueryParameter(QUERY_PARAM, locationQuery)
                     .appendQueryParameter(FORMAT_PARAM, format)
-                    .appendQueryParameter(UNITS_PARAM, units)
+                    .appendQueryParameter(UNITS_PARAM, unitsQuery)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                     .build();
 

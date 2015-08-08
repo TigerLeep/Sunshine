@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +21,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
 
 import com.tigerbase.sunshine.data.WeatherContract;
-import com.tigerbase.sunshine.data.WeatherProvider;
 
 
 /**
@@ -70,6 +70,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
             setHasOptionsMenu(true);
     }
@@ -77,6 +78,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
@@ -84,6 +86,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_forecastfragment, menu);
     }
@@ -91,29 +94,28 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        Log.v(LOG_TAG, "onOptionsItemSelected");
         int id = item.getItemId();
-        //if (id == R.id.action_refresh)
-        //{
-        //    UpdateWeather();
-        //    //String[] forecasts = task.get();
-        //    //for (String forecast : forecasts) {
-        //    //    Log.v(LOG_TAG, "Forecast: " + forecast);
-        //    //}
-        //    return true;
-        //}
+        if (id == R.id.action_refresh)
+        {
+            UpdateWeather();
+            Log.v(LOG_TAG, "Refresh!");
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     private void UpdateWeather() {
+        Log.v(LOG_TAG, "UpdateWeather!");
+
         FetchWeatherTask task = new FetchWeatherTask(getActivity());
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String locationKey = getString(R.string.pref_location_key);
-        String locationDefault = getString(R.string.pref_location_default);
-        String location = preferences.getString(locationKey, locationDefault);
+        String location = Utility.getPreferredLocation(getActivity());
 
         String unitsKey = getString(R.string.pref_units_key);
         String unitsDefault = getString(R.string.pref_units_default);
-        String units = preferences.getString(unitsKey, unitsDefault);
+        String units = Utility.isMetric(getActivity())
+                ? getString(R.string.pref_units_metric)
+                : getString(R.string.pref_units_imperial);
         task.execute(location, units);
     }
 
@@ -121,6 +123,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onCreateView");
         _adapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -131,7 +134,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         {
             @Override
             public void onItemClick(AdapterView adapterView, View view, int position, long l) {
-                Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null)
                 {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
@@ -152,13 +155,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onStart()
     {
+        Log.v(LOG_TAG, "onStart");
         super.onStart();
-        UpdateWeather();
+        //UpdateWeather();
     }
 
     // LoaderManager.LoaderCallbacks interface methods
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "onCreateLoader");
         String locationSetting = Utility.getPreferredLocation(getActivity());
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
         Uri weatherForLocationUri =
@@ -178,11 +183,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "onLoadFinished");
         _adapter.swapCursor(data);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+        Log.v(LOG_TAG, "onLoaderReset");
         _adapter.swapCursor(null);
+    }
+
+    public void onLocationChanged()
+    {
+        Log.v(LOG_TAG, "onLocationChanged");
+        UpdateWeather();
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 }

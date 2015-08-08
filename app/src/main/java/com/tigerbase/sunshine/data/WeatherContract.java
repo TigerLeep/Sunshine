@@ -75,6 +75,7 @@ public class WeatherContract {
         public static final String COLUMN_COORD_LAT = "coord_lat";
         public static final String COLUMN_COORD_LONG = "coord_long";
 
+        // WeatherProvider.LOCATION
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
 
@@ -121,6 +122,7 @@ public class WeatherContract {
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
         public static final String COLUMN_DEGREES = "degrees";
 
+        // WeatherProvider.WEATHER
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
 
@@ -138,6 +140,7 @@ public class WeatherContract {
             Student: Fill in this buildWeatherLocation function
          */
         public static Uri buildWeatherLocation(String locationSetting) {
+            // WeatherProvider.WEATHER_WITH_LOCATION
             return CONTENT_URI
                     .buildUpon()
                     .appendPath(locationSetting)
@@ -146,6 +149,7 @@ public class WeatherContract {
 
         public static Uri buildWeatherLocationWithStartDate(
                 String locationSetting, long startDate) {
+            // WeatherProvider.WEATHER_WITH_LOCATION
             long normalizedDate = normalizeDate(startDate);
             return CONTENT_URI
                     .buildUpon()
@@ -155,6 +159,7 @@ public class WeatherContract {
         }
 
         public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
+            // WeatherProvider.WEATHER_WITH_LOCATION_AND_DATE
             return CONTENT_URI
                     .buildUpon()
                     .appendPath(locationSetting)

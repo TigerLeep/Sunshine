@@ -38,8 +38,10 @@
             </meta-data>
         </activity>
         <provider
-            android:authorities="com.tigerbase.sunshine"
             android:name=".data.WeatherProvider"
+            android:authorities="com.tigerbase.sunshine"
+            android:enabled="true"
+            android:exported="true"
             />
     </application>
 
