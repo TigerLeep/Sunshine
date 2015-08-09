@@ -179,10 +179,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         FetchWeatherTask task = new FetchWeatherTask(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
 
-        String units = Utility.isMetric(getActivity())
-                ? getString(R.string.pref_units_metric)
-                : getString(R.string.pref_units_imperial);
-        task.execute(location, units);
+        task.execute(location);
     }
 
     @Override
