@@ -19,12 +19,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
+import android.util.Log;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utility {
+    private final static String LOG_TAG = Utility.class.getSimpleName();
+
     // Format used for storing dates in the database.  ALso used for converting those strings
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
@@ -140,5 +143,29 @@ public class Utility {
         SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
         String monthDayString = monthDayFormat.format(dateInMillis);
         return monthDayString;
+    }
+
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        double step = (double)(360 * 3) / 16;
+        Log.v(LOG_TAG, "getFormattedWind: degrees = " + Float.toString(degrees));
+        StringBuilder direction = new StringBuilder();
+        if (degrees >= 360 - step || degrees < step) direction.append('N');
+        if (degrees >= 180 - step && degrees < 180 + step) direction.append('S');
+        if (degrees >= 90 - step && degrees < 90 + step) direction.append('E');
+        if (degrees >= 270 - step && degrees < 270 + step) direction.append('W');
+        if (direction.length() == 0)
+        {
+            direction.append("Unknown");
+        }
+        return String.format(context.getString(windFormat), windSpeed, direction.toString());
     }
 }

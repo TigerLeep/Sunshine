@@ -29,7 +29,7 @@ import com.tigerbase.sunshine.data.WeatherContract;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ForecastDetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>
+public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>
 {
 
     private final String LOG_TAG = ForecastFragment.class.getSimpleName();
@@ -41,7 +41,11 @@ public class ForecastDetailFragment extends Fragment  implements LoaderManager.L
             WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
     };
 
     // These indices are tied to DETAILS_COLUMNS.  If DETAILS_COLUMNS changes, these
@@ -51,13 +55,17 @@ public class ForecastDetailFragment extends Fragment  implements LoaderManager.L
     static final int COL_WEATHER_DESC = 2;
     static final int COL_WEATHER_MAX_TEMP = 3;
     static final int COL_WEATHER_MIN_TEMP = 4;
+    static final int COL_WEATHER_HUMIDITY = 5;
+    static final int COL_WEATHER_WIND_SPEED = 6;
+    static final int COL_WEATHER_DEGREES = 7;
+    static final int COL_WEATHER_PRESSURE = 8;
 
     private TextView _textView = null;
     private ShareActionProvider _shareActionProvider = null;
     private String _forecast = "";
     private String _weatherLocationWithDateUrl = "";
 
-    public ForecastDetailFragment()
+    public DetailFragment()
     {
     }
 
@@ -142,8 +150,8 @@ public class ForecastDetailFragment extends Fragment  implements LoaderManager.L
 
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(getActivity());
-        String highLowStr = Utility.formatTemperature(getActivity(), high, isMetric) + "/" + Utility.formatTemperature(getActivity(), low, isMetric);
-        return highLowStr;
+        return Utility.formatTemperature(getActivity(), high, isMetric) + "/"
+               + Utility.formatTemperature(getActivity(), low, isMetric);
     }
 
     // LoaderManager.LoaderCallbacks interface methods
@@ -168,12 +176,20 @@ public class ForecastDetailFragment extends Fragment  implements LoaderManager.L
         if(data != null && data.moveToFirst())
         {
             String highAndLow = formatHighLows(
-                    data.getDouble(ForecastDetailFragment.COL_WEATHER_MAX_TEMP),
-                    data.getDouble(ForecastDetailFragment.COL_WEATHER_MIN_TEMP));
+                    data.getDouble(DetailFragment.COL_WEATHER_MAX_TEMP),
+                    data.getDouble(DetailFragment.COL_WEATHER_MIN_TEMP));
+            float humidity = data.getFloat(DetailFragment.COL_WEATHER_HUMIDITY);
+            float windSpeed = data.getFloat(DetailFragment.COL_WEATHER_WIND_SPEED);
+            float degrees = data.getFloat(DetailFragment.COL_WEATHER_DEGREES);
+            float pressure = data.getFloat(DetailFragment.COL_WEATHER_PRESSURE);
 
-            String forecastText = Utility.formatDate(data.getLong(ForecastDetailFragment.COL_WEATHER_DATE)) +
-                    " - " + data.getString(ForecastDetailFragment.COL_WEATHER_DESC) +
-                    " - " + highAndLow;
+
+            String forecastText = Utility.formatDate(data.getLong(DetailFragment.COL_WEATHER_DATE)) +
+                    " - " + data.getString(DetailFragment.COL_WEATHER_DESC) +
+                    " - " + highAndLow +
+                    "/" + Double.toString(humidity) +
+                    "/" + Utility.getFormattedWind(getActivity(), windSpeed, degrees) +
+                    "/" + Double.toString(pressure);
             _forecast = forecastText;
             _textView.setText(forecastText);
 
