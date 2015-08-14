@@ -94,6 +94,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -129,6 +130,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         _dayTextView = (TextView)rootView.findViewById(R.id.detail_day_textview);
         _dateTextView = (TextView)rootView.findViewById(R.id.detail_date_textview);
@@ -146,6 +148,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_forecastdetailfragment, menu);
 
@@ -170,6 +173,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        Log.v(LOG_TAG, "onOptionsItemSelected");
         int id = item.getItemId();
 
         if(id == R.id.action_map)
@@ -208,6 +212,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     // LoaderManager.LoaderCallbacks interface methods
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "onCreateLoader");
         return new CursorLoader(
                 getActivity(),
                 _locationWithDateUri,
@@ -219,6 +224,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.v(LOG_TAG, "onLoadFinished");
         if(data != null && data.moveToFirst())
         {
             long date = data.getLong(DetailFragment.COL_WEATHER_DATE);
@@ -253,11 +259,12 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        Log.v(LOG_TAG, "onLoaderReset");
     }
 
     public void onLocationChange(String location)
     {
+        Log.v(LOG_TAG, "onLocationChange");
         Uri locationWithDateUri = _locationWithDateUri;
         if(locationWithDateUri != null)
         {
@@ -272,6 +279,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     public void onDateChange(long date)
     {
+        Log.v(LOG_TAG, "onDateChange");
         Uri locationWithDateUri = _locationWithDateUri;
         if(locationWithDateUri != null)
         {
@@ -286,6 +294,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     public void onUriChange(Uri locationWithDateUri)
     {
+        Log.v(LOG_TAG, "onUriChange");
         if(locationWithDateUri != null)
         {
             _locationWithDateUri = locationWithDateUri;

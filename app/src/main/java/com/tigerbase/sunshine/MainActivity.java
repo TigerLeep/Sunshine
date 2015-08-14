@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.tigerbase.sunshine.data.WeatherContract;
 
+import java.util.Date;
+
 
 public class MainActivity extends ActionBarActivity implements IForecastList {
 
@@ -25,48 +27,60 @@ public class MainActivity extends ActionBarActivity implements IForecastList {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Log.v(LOG_TAG, "onCreate");
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         _locationSetting = Utility.getPreferredLocation(this);
         if (findViewById(R.id.weather_detail_container) != null)
         {
             _twoPane = true;
+            Log.v(LOG_TAG, "onCreate - _twoPane = true");
             if (savedInstanceState == null)
             {
+                Log.v(LOG_TAG, "onCreate - savedInstanceState == null");
+                Uri locationWithDateUri = WeatherContract
+                        .WeatherEntry
+                        .buildWeatherLocationWithDate(
+                                _locationSetting,
+                                (new Date()).getTime());
+
+                DetailFragment detailFragment = DetailFragment.CreateInstance(locationWithDateUri);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.weather_detail_container,
-                                new DetailFragment(),
+                                detailFragment,
                                 DETAILFRAGMENT_TAG)
                         .commit();
             }
-            else
-            {
-                _twoPane = false;
-            }
+        }
+        else
+        {
+            _twoPane = false;
+            Log.v(LOG_TAG, "onCreate - _twoPane = false");
         }
     }
 
     @Override
     protected void onStart()
     {
-        super.onStart();
         Log.v(LOG_TAG, "onStart");
+        super.onStart();
     }
 
     @Override
     protected void onPause()
     {
-        super.onPause();
         Log.v(LOG_TAG, "onPause");
+        super.onPause();
     }
 
     @Override
     protected void onResume()
     {
-        super.onResume();
         Log.v(LOG_TAG, "onResume");
+        super.onResume();
+
+        Log.v(LOG_TAG, "onResume - _twoPane == " + Boolean.toString(_twoPane));
 
         if (_locationSetting != Utility.getPreferredLocation(this))
         {
@@ -82,19 +96,20 @@ public class MainActivity extends ActionBarActivity implements IForecastList {
     @Override
     protected void onStop()
     {
-        super.onStop();
         Log.v(LOG_TAG, "onStop");
+        super.onStop();
     }
 
     @Override
     protected void onDestroy()
     {
-        super.onDestroy();
         Log.v(LOG_TAG, "onDestroy");
+        super.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.v(LOG_TAG, "onCreateOptionsMenu");
         // Inflate the menu_main; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -102,6 +117,7 @@ public class MainActivity extends ActionBarActivity implements IForecastList {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(LOG_TAG, "onOptionsItemSelected");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
