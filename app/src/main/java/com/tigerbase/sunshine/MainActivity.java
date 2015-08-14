@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,13 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.tigerbase.sunshine.data.WeatherContract;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements IForecastList {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-    private final String FORECASTFRAGMENT_TAG = "FORECASTFRAGMENT";
+    private static final String DETAILFRAGMENT_TAG = "DETAILFRAGMENTTAG";
 
     private String _locationSetting = "";
+    private boolean _twoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +29,22 @@ public class MainActivity extends ActionBarActivity {
         Log.v(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
         _locationSetting = Utility.getPreferredLocation(this);
-        if (savedInstanceState == null) {
-            Log.v(LOG_TAG, "Creating new ForecastFragment");
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.forecast_container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
+        if (findViewById(R.id.weather_detail_container) != null)
+        {
+            _twoPane = true;
+            if (savedInstanceState == null)
+            {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.weather_detail_container,
+                                new DetailFragment(),
+                                DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+            else
+            {
+                _twoPane = false;
+            }
         }
     }
 
@@ -58,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
             Log.v(LOG_TAG, "Preferred Location changed");
             ForecastFragment forecastFragment =
                     (ForecastFragment)getSupportFragmentManager()
-                            .findFragmentByTag(FORECASTFRAGMENT_TAG);
+                            .findFragmentById(R.id.fragment_forecast);
             forecastFragment.onLocationChanged();
             _locationSetting = Utility.getPreferredLocation(this);
         }
@@ -116,6 +131,28 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onForecastSelected(Uri locationWithDateUri) {
+        Log.v(LOG_TAG, "onForecastSelected: " + locationWithDateUri.toString());
+        if(!_twoPane)
+        {
+            Log.v(LOG_TAG, "onForecastSelected: !_twoPane");
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(locationWithDateUri);
+            startActivity(intent);
+        }
+        else
+        {
+            Log.v(LOG_TAG, "onForecastSelected: _twoPane");
+            DetailFragment detailFragment = (DetailFragment)getSupportFragmentManager()
+                    .findFragmentByTag(DETAILFRAGMENT_TAG);
+            if(detailFragment != null)
+            {
+                detailFragment.onUriChange(locationWithDateUri);
+            }
+        }
     }
 
 }

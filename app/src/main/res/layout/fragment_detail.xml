@@ -21,7 +21,7 @@
             android:id="@+id/detail_date_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="August 12"
+            android:text="August 8"
             />
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,13 +40,13 @@
                     android:id="@+id/detail_high_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="79\u00B0"
+                    android:text="81\u00B0"
                     />
                 <TextView
                     android:id="@+id/detail_low_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="66\u00B0"
+                    android:text="63\u00B0"
                     />
             </LinearLayout>
             <LinearLayout
@@ -66,7 +66,7 @@
                     android:id="@+id/detail_forecast_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rain"
+                    android:text="Clear"
                     />
 
             </LinearLayout>
@@ -75,19 +75,16 @@
             android:id="@+id/detail_humidity_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Humidity: 81 %"
             />
         <TextView
             android:id="@+id/detail_wind_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wind: 2 km/h N"
             />
         <TextView
             android:id="@+id/detail_pressure_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pressure: 1024 hPa"
             />
     </LinearLayout>
 </ScrollView>

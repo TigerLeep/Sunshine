@@ -94,13 +94,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 if (cursor != null)
                 {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract
-                                    .WeatherEntry
-                                    .buildWeatherLocationWithDate(
-                                            locationSetting,
-                                            cursor.getLong(COL_WEATHER_DATE)));
-                    startActivity(intent);
+                    Uri locationWithDateUri = WeatherContract
+                            .WeatherEntry
+                            .buildWeatherLocationWithDate(
+                                    locationSetting,
+                                    cursor.getLong(COL_WEATHER_DATE));
+                    Log.v(LOG_TAG, locationWithDateUri.toString());
+                    if (getActivity() instanceof IForecastList)
+                    {
+                        Log.v(LOG_TAG, "instanceof IForecastList");
+                        ((IForecastList)getActivity()).onForecastSelected(locationWithDateUri);
+                    }
                 }
             }
         });

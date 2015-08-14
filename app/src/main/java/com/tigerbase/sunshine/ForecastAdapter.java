@@ -73,9 +73,24 @@ public class ForecastAdapter extends CursorAdapter
         ForecastListItemViewHolder viewHolder = (ForecastListItemViewHolder)view.getTag();
 
         // Read weather icon ID from cursor
-        int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_ID);
-        // Use placeholder image for now
-        viewHolder.iconView.setImageResource(R.mipmap.ic_launcher);
+        int conditionCode = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        int iconResourceId = -1;
+        int viewType = getItemViewType(cursor.getPosition());
+        switch(viewType)
+        {
+            case VIEW_TYPE_TODAY:
+                iconResourceId = Utility.getArtResourceForWeatherCondition(conditionCode);
+                break;
+            case VIEW_TYPE_FUTURE_DAY:
+                iconResourceId = Utility.getIconResourceForWeatherCondition(conditionCode);
+                break;
+        }
+        Log.v(LOG_TAG, "bindView: " + Integer.toString(viewType) + "/" + Integer.toString(conditionCode) + "/" + Integer.toString(iconResourceId));
+        if (iconResourceId == -1)
+        {
+            iconResourceId = R.mipmap.ic_launcher;
+        }
+        viewHolder.iconView.setImageResource(iconResourceId);
 
         // TODO Read date from cursor
         long date = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
@@ -88,16 +103,13 @@ public class ForecastAdapter extends CursorAdapter
 
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
-        Log.v(LOG_TAG, "isMetric: " + Boolean.toString(isMetric));
 
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        Log.v(LOG_TAG, "high: " + Double.toString(high));
         viewHolder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
 
         // TODO Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        Log.v(LOG_TAG, "low: " + Double.toString(low));
         viewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
     }
 }

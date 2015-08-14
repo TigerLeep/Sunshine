@@ -33,17 +33,18 @@ import com.tigerbase.sunshine.data.WeatherContract;
  */
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>
 {
-
-    private final String LOG_TAG = ForecastFragment.class.getSimpleName();
+    private final String LOG_TAG = DetailFragment.class.getSimpleName();
     private final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private final int LOADER_ID = 100;
 
+    private final static String ARGUMENT_LOCATIONWITHDATEURI_KEY = "LocationWithDateUri";
     private static final String[] DETAILS_COLUMNS = {
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
             WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
@@ -52,15 +53,16 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     // These indices are tied to DETAILS_COLUMNS.  If DETAILS_COLUMNS changes, these
     // must change.
-    static final int COL_WEATHER_ID = 0;
-    static final int COL_WEATHER_DATE = 1;
-    static final int COL_WEATHER_DESC = 2;
-    static final int COL_WEATHER_MAX_TEMP = 3;
-    static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_WEATHER_HUMIDITY = 5;
-    static final int COL_WEATHER_WIND_SPEED = 6;
-    static final int COL_WEATHER_DEGREES = 7;
-    static final int COL_WEATHER_PRESSURE = 8;
+    private static final int COL_WEATHER_ID = 0;
+    private static final int COL_WEATHER_DATE = 1;
+    private static final int COL_WEATHER_DESC = 2;
+    private static final int COL_WEATHER_MAX_TEMP = 3;
+    private static final int COL_WEATHER_MIN_TEMP = 4;
+    private static final int COL_WEATHER_CONDITION_ID = 5;
+    private static final int COL_WEATHER_HUMIDITY = 6;
+    private static final int COL_WEATHER_WIND_SPEED = 7;
+    private static final int COL_WEATHER_DEGREES = 8;
+    private static final int COL_WEATHER_PRESSURE = 9;
 
     private TextView _dayTextView = null;
     private TextView _dateTextView = null;
@@ -73,10 +75,20 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private TextView _forecastTextView = null;
 
     private ShareActionProvider _shareActionProvider = null;
-    private String _weatherLocationWithDateUrl = "";
+    private Uri _locationWithDateUri = null;
 
     public DetailFragment()
     {
+    }
+
+    public static DetailFragment CreateInstance(Uri locationWithDateUri)
+    {
+        DetailFragment detailFragment = new DetailFragment();
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(ARGUMENT_LOCATIONWITHDATEURI_KEY, locationWithDateUri);
+        detailFragment.setArguments(arguments);
+
+        return detailFragment;
     }
 
     @Override
@@ -89,7 +101,27 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
+        Log.v(LOG_TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+
+        Uri locationWithDateUri = null;
+        Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
+
+        if (intent != null && intent.getData() != null)
+        {
+            // Our Activity was created with an Intent (single-pane mode)
+            locationWithDateUri = intent.getData();
+        }
+        else if (arguments!= null && arguments.containsKey(ARGUMENT_LOCATIONWITHDATEURI_KEY))
+        {
+            // Our Activity was created with Bundle arguments (two-pane mode)
+            locationWithDateUri = arguments.getParcelable(ARGUMENT_LOCATIONWITHDATEURI_KEY);
+        }
+
+        // Save the Uri to be used with the loader.
+        _locationWithDateUri = locationWithDateUri;
+
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -176,14 +208,9 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     // LoaderManager.LoaderCallbacks interface methods
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null)
-        {
-            return null;
-        }
         return new CursorLoader(
                 getActivity(),
-                intent.getData(),
+                _locationWithDateUri,
                 DETAILS_COLUMNS,
                 null,
                 null,
@@ -197,11 +224,12 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             long date = data.getLong(DetailFragment.COL_WEATHER_DATE);
             float high = data.getFloat(DetailFragment.COL_WEATHER_MAX_TEMP);
             float low = data.getFloat(DetailFragment.COL_WEATHER_MIN_TEMP);
+            int conditionCode = data.getInt(DetailFragment.COL_WEATHER_CONDITION_ID);
+            int iconResourceId = Utility.getArtResourceForWeatherCondition(conditionCode);
             float humidity = data.getFloat(DetailFragment.COL_WEATHER_HUMIDITY);
             float windSpeed = data.getFloat(DetailFragment.COL_WEATHER_WIND_SPEED);
             float degrees = data.getFloat(DetailFragment.COL_WEATHER_DEGREES);
             float pressure = data.getFloat(DetailFragment.COL_WEATHER_PRESSURE);
-            float iconId = data.getInt(DetailFragment.COL_WEATHER_ID);
             String description = data.getString(DetailFragment.COL_WEATHER_DESC);
 
             Activity context = getActivity();
@@ -213,7 +241,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             _humidityTextView.setText(String.format(context.getString(R.string.format_humidity), humidity));
             _windTextView.setText(Utility.getFormattedWind(context, windSpeed, degrees));
             _pressureTextView.setText(String.format(context.getString(R.string.format_pressure), pressure));
-            _iconImageView.setImageResource(R.mipmap.ic_launcher);
+            _iconImageView.setImageResource(iconResourceId);
             _forecastTextView.setText(description);
 
             //if (_shareActionProvider != null)
@@ -226,6 +254,51 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    public void onLocationChange(String location)
+    {
+        Uri locationWithDateUri = _locationWithDateUri;
+        if(locationWithDateUri != null)
+        {
+            long date = WeatherContract.WeatherEntry
+                    .getDateFromUri(locationWithDateUri);
+            Uri newLocationWithDateUri = WeatherContract.WeatherEntry
+                    .buildWeatherLocationWithDate(location, date);
+            _locationWithDateUri = newLocationWithDateUri;
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
+    }
+
+    public void onDateChange(long date)
+    {
+        Uri locationWithDateUri = _locationWithDateUri;
+        if(locationWithDateUri != null)
+        {
+            String location = WeatherContract.WeatherEntry
+                    .getLocationSettingFromUri(locationWithDateUri);
+            Uri newLocationWithDateUri = WeatherContract.WeatherEntry
+                    .buildWeatherLocationWithDate(location, date);
+            _locationWithDateUri = newLocationWithDateUri;
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
+    }
+
+    public void onUriChange(Uri locationWithDateUri)
+    {
+        if(locationWithDateUri != null)
+        {
+            _locationWithDateUri = locationWithDateUri;
+            if(getLoaderManager() == null)
+            {
+                Log.v(LOG_TAG, "onUriChange: null");
+            }
+            else
+            {
+                Log.v(LOG_TAG, "onUriChange: !null");
+            }
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
     }
 
 }
