@@ -305,8 +305,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             else
             {
                 Log.v(LOG_TAG, "onUriChange: !null");
+                getLoaderManager().restartLoader(LOADER_ID, null, this);
             }
-            getLoaderManager().restartLoader(LOADER_ID, null, this);
         }
     }
 
