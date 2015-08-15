@@ -75,16 +75,19 @@
             android:id="@+id/detail_humidity_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Humidity: 84%"
             />
         <TextView
             android:id="@+id/detail_wind_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Wind: 6 mph NW"
             />
         <TextView
             android:id="@+id/detail_pressure_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Pressure: 1014 hPa"
             />
     </LinearLayout>
 </ScrollView>

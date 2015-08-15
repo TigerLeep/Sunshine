@@ -57,7 +57,11 @@ public class MainActivity extends ActionBarActivity implements IForecastList {
         {
             _twoPane = false;
             Log.v(LOG_TAG, "onCreate - _twoPane = false");
+            getSupportActionBar().setElevation(0f);
         }
+
+        ForecastFragment forecastFragment = ((ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast));
+        forecastFragment.setUseSpecialTodayLayout(!_twoPane);
     }
 
     @Override
