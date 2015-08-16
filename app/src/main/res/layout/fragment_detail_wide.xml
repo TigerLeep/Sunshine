@@ -3,69 +3,98 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/activity_horizontal_margin"
         android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
         tools:context="com.tigerbase.sunshine.DetailFragment"
         >
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
+            android:minWidth="56dp"
             android:orientation="vertical"
+            android:layout_marginTop="16dp"
             tools:context="com.tigerbase.sunshine.DetailFragment"
             >
             <TextView
                 android:id="@+id/detail_day_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minWidth="120dp"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/black"
+                android:textSize="24sp"
                 android:text="Today"
                 />
             <TextView
                 android:id="@+id/detail_date_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/grey_700"
+                android:textSize="20sp"
                 android:text="August 8"
                 />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
             android:orientation="vertical"
+            android:layout_marginLeft="16dp"
             tools:context="com.tigerbase.sunshine.DetailFragment"
             >
             <TextView
                 android:id="@+id/detail_high_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_light"
+                android:textColor="@color/black"
+                android:textSize="96sp"
                 android:text="81\u00B0"
                 />
             <TextView
                 android:id="@+id/detail_low_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:fontFamily="@string/font_family_light"
+                android:textColor="@color/grey_700"
+                android:textSize="48sp"
                 android:text="63\u00B0"
                 />
             <TextView
                 android:id="@+id/detail_humidity_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:paddingTop="4dp"
                 android:text="Humidity: 84%"
                 />
             <TextView
                 android:id="@+id/detail_wind_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:paddingTop="4dp"
                 android:text="Wind: 6 mph NW"
                 />
             <TextView
                 android:id="@+id/detail_pressure_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/black"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:paddingTop="4dp"
                 android:text="Pressure: 1014 hPa"
                 />
         </LinearLayout>
@@ -73,19 +102,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:gravity="center"
             >
             <ImageView
                 android:id="@+id/detail_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/art_light_clouds"
                 />
             <TextView
                 android:id="@+id/detail_forecast_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@string/font_family_condensed"
+                android:textColor="@color/grey_700"
+                android:textAppearance="?android:textAppearanceLarge"
                 android:text="Clear"
                 />
 
