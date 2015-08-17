@@ -78,6 +78,10 @@ public class ForecastAdapter extends CursorAdapter
     {
         ForecastListItemViewHolder viewHolder = (ForecastListItemViewHolder)view.getTag();
 
+        // TODO Read weather forecast from cursor
+        String forecast = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
+        viewHolder.descriptionView.setText(forecast);
+
         // Read weather icon ID from cursor
         int conditionCode = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
         int iconResourceId = -1;
@@ -97,15 +101,11 @@ public class ForecastAdapter extends CursorAdapter
             iconResourceId = R.mipmap.ic_launcher;
         }
         viewHolder.iconView.setImageResource(iconResourceId);
+        viewHolder.iconView.setContentDescription(forecast + " icon");
 
         // TODO Read date from cursor
         long date = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(mContext, date));
-
-        // TODO Read weather forecast from cursor
-        String forecast = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
-        viewHolder.descriptionView.setText(forecast);
-
 
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
@@ -113,9 +113,11 @@ public class ForecastAdapter extends CursorAdapter
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
         viewHolder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
+        viewHolder.highTempView.setContentDescription("High temperature " + viewHolder.highTempView.getText());
 
         // TODO Read low temperature from cursor
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         viewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
+        viewHolder.lowTempView.setContentDescription("Low temperature " + viewHolder.lowTempView.getText());
     }
 }

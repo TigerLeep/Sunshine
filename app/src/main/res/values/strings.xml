@@ -38,17 +38,27 @@
         Wind: <xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g>
     </string>
 
+    <string name="format_spoken_wind_mph">
+        Wend: <xliff:g id="speed">%1$1.0f</xliff:g> mph <xliff:g id="direction">%2$s</xliff:g>
+    </string>
+
     <!-- Wind in kph [CHAR LIMIT=25] -->
     <string name="format_wind_kmh">
         Wind: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g>
     </string>
 
+    <string name="format_spoken_wind_kmh">
+        Wend: <xliff:g id="speed">%1$1.0f</xliff:g> km/h <xliff:g id="direction">%2$s</xliff:g>
+    </string>
+
     <!-- Pressure format CHAR LIMIT=25] -->
     <string name="format_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hPa</string>
+    <string name="format_spoken_pressure">Pressure: <xliff:g id="pressure">%1.0f</xliff:g> hectopascals</string>
 
     <!-- Humidity format CHAR LIMIT=25]-->
     <string name="format_humidity">Humidity: <xliff:g id="humidity">%1.0f</xliff:g> %%</string>
     <string name="weather_icon_content_description">Weather Icon</string>
     <string name="font_family_condensed">sans-serif-condensed</string>
     <string name="font_family_light">sans-serif-light</string>
+    <string name="accessibility_wind_direction_compass">Wend direction compass</string>
 </resources>

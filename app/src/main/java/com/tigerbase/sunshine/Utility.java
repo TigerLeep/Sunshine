@@ -32,20 +32,23 @@ public class Utility {
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
 
-    public static String getPreferredLocation(Context context) {
+    public static String getPreferredLocation(Context context)
+    {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
     }
 
-    public static boolean isMetric(Context context) {
+    public static boolean isMetric(Context context)
+    {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_units_key),
                 context.getString(R.string.pref_units_metric))
                 .equals(context.getString(R.string.pref_units_metric));
     }
 
-    static String formatTemperature(Context context, double temperature, boolean isMetric) {
+    static String formatTemperature(Context context, double temperature, boolean isMetric)
+    {
         double temp;
         if ( !isMetric ) {
             temp = 9*temperature/5+32;
@@ -55,7 +58,8 @@ public class Utility {
         return context.getString(R.string.format_temperature, temp);
     }
 
-    static String formatDate(long dateInMillis) {
+    static String formatDate(long dateInMillis)
+    {
         Date date = new Date(dateInMillis);
         return DateFormat.getDateInstance().format(date);
     }
@@ -68,7 +72,8 @@ public class Utility {
      * @param dateInMillis The date in milliseconds
      * @return a user-friendly representation of the date.
      */
-    public static String getFriendlyDayString(Context context, long dateInMillis) {
+    public static String getFriendlyDayString(Context context, long dateInMillis)
+    {
         // The day string for forecast uses the following logic:
         // For today: "Today, June 8"
         // For tomorrow:  "Tomorrow"
@@ -108,7 +113,8 @@ public class Utility {
      * @param dateInMillis The date in milliseconds
      * @return
      */
-    public static String getDayName(Context context, long dateInMillis) {
+    public static String getDayName(Context context, long dateInMillis)
+    {
         // If the date is today, return the localized version of "Today" instead of the actual
         // day name.
 
@@ -136,7 +142,8 @@ public class Utility {
      *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
-    public static String getFormattedMonthDay(Context context, long dateInMillis ) {
+    public static String getFormattedMonthDay(Context context, long dateInMillis )
+    {
         Time time = new Time();
         time.setToNow();
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
@@ -145,12 +152,16 @@ public class Utility {
         return monthDayString;
     }
 
-    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+    public static String getFormattedWind(Context context, float windSpeed, float degrees, boolean useFullDirection)
+    {
         int windFormat;
+        int windSpokenFormat;
         if (Utility.isMetric(context)) {
             windFormat = R.string.format_wind_kmh;
+            windSpokenFormat = R.string.format_spoken_wind_kmh;
         } else {
             windFormat = R.string.format_wind_mph;
+            windSpokenFormat = R.string.format_spoken_wind_mph;
             windSpeed = .621371192237334f * windSpeed;
         }
 
@@ -158,13 +169,35 @@ public class Utility {
         double step = (double)(360 * 3) / 16;
         Log.v(LOG_TAG, "getFormattedWind: degrees = " + Float.toString(degrees));
         StringBuilder direction = new StringBuilder();
-        if (degrees >= 360 - step || degrees < step) direction.append('N');
-        if (degrees >= 180 - step && degrees < 180 + step) direction.append('S');
-        if (degrees >= 90 - step && degrees < 90 + step) direction.append('E');
-        if (degrees >= 270 - step && degrees < 270 + step) direction.append('W');
+        StringBuilder fullDirection = new StringBuilder("from the ");
+        if (degrees >= 360 - step || degrees < step)
+        {
+            direction.append('N');
+            fullDirection.append("north ");
+        }
+        if (degrees >= 180 - step && degrees < 180 + step)
+        {
+            direction.append('S');
+            fullDirection.append("south ");
+        }
+        if (degrees >= 90 - step && degrees < 90 + step)
+        {
+            direction.append('E');
+            fullDirection.append("east");
+        }
+        if (degrees >= 270 - step && degrees < 270 + step)
+        {
+            direction.append('W');
+            fullDirection.append("west");
+        }
         if (direction.length() == 0)
         {
             direction.append("Unknown");
+            fullDirection.append("unknown direction");
+        }
+        if (useFullDirection)
+        {
+            return String.format(context.getString(windSpokenFormat), windSpeed, fullDirection.toString());
         }
         return String.format(context.getString(windFormat), windSpeed, direction.toString());
     }
@@ -175,7 +208,8 @@ public class Utility {
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */
-    public static int getIconResourceForWeatherCondition(int weatherId) {
+    public static int getIconResourceForWeatherCondition(int weatherId)
+    {
         // Based on weather code data found at:
         // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
         Log.v(LOG_TAG, "getIconResourceForWeatherCondition: " + Integer.toString(weatherId));
@@ -211,7 +245,8 @@ public class Utility {
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding image. -1 if no relation is found.
      */
-    public static int getArtResourceForWeatherCondition(int weatherId) {
+    public static int getArtResourceForWeatherCondition(int weatherId)
+    {
         // Based on weather code data found at:
         // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
         Log.v(LOG_TAG, "getArtResourceForWeatherCondition: " + Integer.toString(weatherId));

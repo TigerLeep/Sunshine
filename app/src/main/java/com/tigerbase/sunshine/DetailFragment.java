@@ -70,6 +70,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private TextView _lowTextView = null;
     private TextView _humidityTextView = null;
     private TextView _windTextView = null;
+    private MyView _windCompass = null;
     private TextView _pressureTextView = null;
     private ImageView _iconImageView = null;
     private TextView _forecastTextView = null;
@@ -138,6 +139,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         _lowTextView = (TextView)rootView.findViewById(R.id.detail_low_textview);
         _humidityTextView = (TextView)rootView.findViewById(R.id.detail_humidity_textview);
         _windTextView = (TextView)rootView.findViewById(R.id.detail_wind_textview);
+        _windCompass = (MyView)rootView.findViewById(R.id.detail_wind_compass);
         _pressureTextView = (TextView)rootView.findViewById(R.id.detail_pressure_textview);
         _iconImageView = (ImageView)rootView.findViewById(R.id.detail_icon);
         _forecastTextView = (TextView)rootView.findViewById(R.id.detail_forecast_textview);
@@ -240,14 +242,29 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
             Activity context = getActivity();
             boolean isMetric = Utility.isMetric(context);
+
             _dayTextView.setText(Utility.getDayName(context, date));
+
             _dateTextView.setText(Utility.getFormattedMonthDay(context, date));
+
             _highTextView.setText(Utility.formatTemperature(context, high, isMetric));
+            _highTextView.setContentDescription("High temperature " + _highTextView.getText());
+
             _lowTextView.setText(Utility.formatTemperature(context, low, isMetric));
+            _lowTextView.setContentDescription("Low temperature " + _lowTextView.getText());
+
             _humidityTextView.setText(String.format(context.getString(R.string.format_humidity), humidity));
-            _windTextView.setText(Utility.getFormattedWind(context, windSpeed, degrees));
+
+            _windTextView.setText(Utility.getFormattedWind(context, windSpeed, degrees, false));
+            _windTextView.setContentDescription(Utility.getFormattedWind(context, windSpeed, degrees, true));
+            _windCompass.setAngleInDegrees(degrees);
+
             _pressureTextView.setText(String.format(context.getString(R.string.format_pressure), pressure));
+            _pressureTextView.setContentDescription(String.format(context.getString(R.string.format_spoken_pressure), pressure));
+
             _iconImageView.setImageResource(iconResourceId);
+            _iconImageView.setContentDescription(description + " icon");
+
             _forecastTextView.setText(description);
 
             //if (_shareActionProvider != null)
