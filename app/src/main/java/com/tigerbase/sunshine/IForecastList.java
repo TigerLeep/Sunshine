@@ -4,5 +4,5 @@ import android.net.Uri;
 
 public interface IForecastList
 {
-    public void onForecastSelected(Uri dateWithLocationUri);
+    void onForecastSelected(Uri dateWithLocationUri);
 }
